@@ -1,34 +1,35 @@
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f9f9f9;
-  direction: rtl;
-  padding: 20px;
+  background: #f8f8f8;
   text-align: center;
+  padding: 20px;
+  direction: rtl;
 }
 
 h1 {
-  color: #2c3e50;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 select {
-  padding: 10px;
-  font-size: 16px;
+  font-size: 18px;
+  padding: 5px 10px;
   margin-bottom: 20px;
 }
 
 table {
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   border-collapse: collapse;
-  margin-top: 20px;
-  background-color: white;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 th, td {
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 8px;
 }
 
 th {
-  background-color: #2c3e50;
-  color: white;
+  background: #eee;
 }

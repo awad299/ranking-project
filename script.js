@@ -1,67 +1,54 @@
-const SHEET_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgUfqq8iE8JGSYKTKTItVz-1cmwxBfviIFHC3_WDokoDphqO5DaUQ3k4myaHWQlHMvPG6HTZDMziPif6LYFxk0bbBwJjJSOf4bINyL0cnOBxxAZkbcrJXpcIke-AhrCzBA05h3FbZbOJbqVZ-Qm44ErLQHC4gpRc8GP0WQU2pMylyFXLUcHNo8gACtc-sPvICneQUKYvNAL66R5TwhLSYv_DMaZc9hnl694kjSfQJqJUdW9SgTMvTQfT1hW9yLXQgn_3pOraSnnLvo3VJyLLQasgK6vcw&lib=McV44pOckP5YBKfAf6ofWizjQ8ssKZD3w";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbyAML44GCL8BKxdM1QB8jmCzsQz8wBdxyv-CTlVBdL-QwQhYpeS7I-PKh9RcfU8v4bm/exec";
 
 const output = document.getElementById("output");
 const selector = document.getElementById("sheetSelector");
-let data = {};
 
 async function fetchData() {
-  output.innerHTML = "جاري تحميل البيانات...";
+  output.innerHTML = "⏳ جاري تحميل البيانات...";
+
   try {
     const res = await fetch(SHEET_URL);
     const json = await res.json();
+    const data = json["النتائج"];
 
-    if (!json["النتائج"]) {
-      output.innerHTML = "البيانات غير متوفرة.";
-      return;
-    }
-
-    data = json["النتائج"];
     selector.innerHTML = "";
 
-    Object.keys(data).forEach(sheet => {
+    for (const sheetName in data) {
       const option = document.createElement("option");
-      option.value = sheet;
-      option.textContent = sheet;
+      option.value = sheetName;
+      option.textContent = sheetName;
       selector.appendChild(option);
-    });
-
-    if (Object.keys(data).length > 0) {
-      selector.value = Object.keys(data)[0];
-      renderTable(selector.value);
     }
-  } catch (err) {
-    output.innerHTML = "حدث خطأ في تحميل البيانات.";
-    console.error(err);
+
+    renderTable(data[selector.value]);
+
+    selector.addEventListener("change", () => {
+      renderTable(data[selector.value]);
+    });
+  } catch (error) {
+    output.innerHTML = "❌ حدث خطأ في تحميل البيانات. تحقق من الرابط.";
+    console.error(error);
   }
 }
 
-function renderTable(sheetName) {
-  const rows = data[sheetName];
-  if (!rows || rows.length === 0) {
-    output.innerHTML = "لا توجد بيانات.";
+function renderTable(data) {
+  if (!Array.isArray(data)) {
+    output.innerHTML = "⚠️ لا توجد بيانات متاحة.";
     return;
   }
 
   let html = "<table><thead><tr>";
-  rows[0].forEach(cell => {
-    html += `<th>${cell}</th>`;
-  });
+  html += Object.keys(data[0]).map(h => `<th>${h}</th>`).join("");
   html += "</tr></thead><tbody>";
 
-  rows.slice(1).forEach(row => {
+  data.forEach(row => {
     html += "<tr>";
-    row.forEach(cell => {
-      html += `<td>${cell}</td>`;
-    });
+    html += Object.values(row).map(val => `<td>${val || ""}</td>`).join("");
     html += "</tr>";
   });
 
   html += "</tbody></table>";
   output.innerHTML = html;
 }
-
-selector.addEventListener("change", () => {
-  renderTable(selector.value);
-});
 
 fetchData();
