@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عرض نتائج الطلاب</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f4f8;
+      padding: 20px;
+      direction: rtl;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    select, table {
+      width: 100%;
+      margin-top: 20px;
+    }
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+    th {
+      background-color: #1976d2;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>نتائج الطلاب حسب الأسبوع</h1>
+  <select id="sheetSelector"></select>
+  <div id="tableContainer">جاري تحميل البيانات...</div>
+
+  <script>
+    const apiUrl = "https://script.google.com/macros/s/AKfycbyQri0kb_tQtFRkk0NiC7wQwB2yV24nAHCkJrcH8QeDDP2UFYDMS176375hCucWxPHl/exec";
+
+    async function fetchData() {
+      try {
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+        const data = json['النتائج'];
+        populateSheetSelector(data);
+      } catch (error) {
+        document.getElementById("tableContainer").innerHTML = "فشل في تحميل البيانات.";
+        console.error(error);
+      }
+    }
+
+    function populateSheetSelector(data) {
+      const selector = document.getElementById("sheetSelector");
+      selector.innerHTML = "";
+      const sheetNames = Object.keys(data);
+
+      sheetNames.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.text = name;
+        selector.appendChild(option);
+      });
+
+      selector.onchange = () => {
+        displayTable(data[selector.value]);
+      };
+
+      if (sheetNames.length > 0) {
+        displayTable(data[sheetNames[0]]);
+      }
+    }
+
+    function displayTable(sheetData) {
+      const container = document.getElementById("tableContainer");
+      if (!Array.isArray(sheetData) || sheetData.length === 0) {
+        container.innerHTML = "<p>لا توجد بيانات لعرضها.</p>";
+        return;
+      }
+
+      const headers = Object.keys(sheetData[0]);
+      let html = "<table><thead><tr>";
+      headers.forEach(h => html += `<th>${h}</th>`);
+      html += "</tr></thead><tbody>";
+
+      sheetData.forEach(row => {
+        html += "<tr>";
+        headers.forEach(h => {
+          html += `<td>${row[h] !== undefined ? row[h] : ""}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
