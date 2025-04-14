@@ -1,4 +1,3 @@
-
 const scriptUrl = "https://script.google.com/macros/s/AKfycbxV2tC7beuPOuYo-I_5SnLiKMsQrikGmqLGS3sol2j4zmqz1isO3Xhw0WMgwTml-mAo/exec";
 const weekSelect = document.getElementById("weekSelect");
 const tableContainer = document.getElementById("tableContainer");
@@ -30,8 +29,9 @@ weekSelect.addEventListener("change", () => {
     tableContainer.innerHTML = `<p>${data}</p>`;
     return;
   }
+
   const table = document.createElement("table");
-  const headers = Object.keys(data[0]);
+  const headers = ["اسم الطالب", "المشاركة", "الواجب", "السلوك", "الإختبار", "المجموع", "الترتيب", "النقاط", "الرقم"];
   const thead = table.createTHead();
   const headRow = thead.insertRow();
   headers.forEach(h => {
@@ -39,15 +39,41 @@ weekSelect.addEventListener("change", () => {
     th.textContent = h;
     headRow.appendChild(th);
   });
+
   const tbody = table.createTBody();
   data.forEach(row => {
     const tr = tbody.insertRow();
-    headers.forEach(h => {
-      const td = tr.insertCell();
-      td.textContent = row[h] || "";
+    let totalParticipation = 0, totalHomework = 0, totalBehavior = 0, totalTest = 0;
+
+    ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(day => {
+      totalParticipation += parseInt(row[`${day} - المشاركة`] || 0);
+      totalHomework += parseInt(row[`${day} - الواجب`] || 0);
+      totalBehavior += parseInt(row[`${day} - السلوك`] || 0);
+      totalTest += parseInt(row[`${day} - الإختبار`] || 0);
     });
+
+    const total = totalParticipation + totalHomework + totalBehavior + totalTest;
+
+    const values = [
+      row["اسم الطالب"],
+      totalParticipation,
+      totalHomework,
+      totalBehavior,
+      totalTest,
+      total,
+      row["الترتيب"],
+      row["النقاط"],
+      row["الرقم"]
+    ];
+
+    values.forEach(val => {
+      const td = tr.insertCell();
+      td.textContent = val || "";
+    });
+
     tr.addEventListener("click", () => showStudentDetails(row["اسم الطالب"], data));
   });
+
   tableContainer.appendChild(table);
 });
 
@@ -62,14 +88,15 @@ function showStudentDetails(name, weekData) {
     const tr = document.createElement("tr");
     let total = 0;
     const row = [day];
+
     ["المشاركة", "الواجب", "السلوك", "الإختبار"].forEach(type => {
       const key = `${day} - ${type}`;
       const val = parseInt(studentRow[key] || "0");
       row.push(val);
       total += val;
     });
-    row.push(total);
 
+    row.push(total);
     row.forEach((val, i) => {
       const td = document.createElement("td");
       td.textContent = val;
@@ -80,8 +107,10 @@ function showStudentDetails(name, weekData) {
       }
       tr.appendChild(td);
     });
+
     studentDetailsTable.appendChild(tr);
   });
+
   modal.style.display = "block";
 }
 
