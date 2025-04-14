@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نتائج الطلاب</title>
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1>نتائج الطلاب الأسبوعية</h1>
+    <label for="weekSelect">اختر الأسبوع:</label>
+    <select id="weekSelect">
+      <option>جاري التحميل...</option>
+    </select>
+    <table id="studentsTable"></table>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2 id="studentName">تفاصيل الطالب</h2>
+      <table id="detailsTable"></table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
