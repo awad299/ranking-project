@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مسابقة التميز</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>مسابقة التميز للصف السادس</h1>
+  <select id="weekSelect"></select>
+  <div id="tableContainer"></div>
+
+  <div id="studentModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="studentNameTitle"></h2>
+      <table id="studentDetailsTable">
+        <thead>
+          <tr>
+            <th>اليوم</th>
+            <th>المشاركة</th>
+            <th>الواجب</th>
+            <th>السلوك</th>
+            <th>الاختبار</th>
+            <th>المجموع</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
