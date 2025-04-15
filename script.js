@@ -1,5 +1,5 @@
 
-const scriptUrl = "https://script.google.com/macros/s/AKfycbxJKDokYxc7uPhrZzjbRaYi2bN13IbhcMas2i_AqcoYjKdoTU0fB7QA9fth_9_idYo/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbymXBVw5bBMyMRrD7jgBXnfCH19PENDuSi3M2dbfmK__6LiUOAgPlHFguAsY1jI5fJL/exec";
 const weekSelect = document.getElementById("weekSelect");
 const tableContainer = document.getElementById("tableContainer");
 const modal = document.getElementById("studentModal");
