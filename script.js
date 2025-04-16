@@ -1,5 +1,5 @@
+const scriptUrl = "https://script.google.com/macros/s/AKfycbzf0IfLlfk8zxquiGdkyTw6FKSE0GxhB0ZhAuEsplZ7rj_T5CDF_lEs5qspoEnFFItr/exec";
 
-const scriptUrl = "https://script.google.com/macros/s/AKfycbze-9A1aUQ3I7QTMtgv3WyhD8AM2dvCiZ8s7lv5WGBqWw0u93Vbr0ExvkCdlZ0rMO45/exec";
 const weekSelect = document.getElementById("weekSelect");
 const tableContainer = document.getElementById("tableContainer");
 const modal = document.getElementById("studentModal");
@@ -27,13 +27,22 @@ weekSelect.addEventListener("change", () => {
   const data = sheetData[weekName];
   tableContainer.innerHTML = "";
 
-  if (typeof data === "string") {
-    tableContainer.innerHTML = `<p>${data}</p>`;
+  if (!data) {
+    tableContainer.innerHTML = "<p>لا توجد بيانات</p>";
     return;
   }
 
+  // إذا كانت صفحة الترتيب العام
+  if (Array.isArray(data)) {
+    renderGeneralTable(data);
+  } else {
+    renderWeeklyTable(data);
+  }
+});
+
+function renderGeneralTable(data) {
   const table = document.createElement("table");
-  const headers = ["اسم الطالب", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
+  const headers = ["الرقم", "اسم الطالب", "النقاط", "الترتيب"];
   const thead = table.createTHead();
   const headRow = thead.insertRow();
   headers.forEach(h => {
@@ -45,53 +54,52 @@ weekSelect.addEventListener("change", () => {
   const tbody = table.createTBody();
   data.forEach(row => {
     const tr = tbody.insertRow();
-    const values = [
-      row["اسم الطالب"],
-      row["المشاركة"],
-      row["الواجب"],
-      row["السلوك"],
-      row["الإختبار"],
-      row["المجموع"]
-    ];
-    values.forEach(val => {
+    headers.forEach(h => {
       const td = tr.insertCell();
-      td.textContent = val || "";
+      td.textContent = row[h] || "";
     });
-    tr.addEventListener("click", () => showStudentDetails(row["اسم الطالب"], data));
   });
 
   tableContainer.appendChild(table);
-});
+}
 
-function showStudentDetails(name, weekData) {
+function renderWeeklyTable(data) {
+  const table = document.createElement("table");
+  const headers = ["اسم الطالب", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
+  const thead = table.createTHead();
+  const headRow = thead.insertRow();
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    headRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  data["الترتيب"].forEach(row => {
+    const tr = tbody.insertRow();
+    headers.forEach(h => {
+      const td = tr.insertCell();
+      td.textContent = row[h] || "";
+    });
+    tr.addEventListener("click", () => showStudentDetails(row["اسم الطالب"], data["تفاصيل"]));
+  });
+
+  tableContainer.appendChild(table);
+}
+
+function showStudentDetails(name, detailsData) {
+  const records = detailsData[name];
+  if (!records) return;
+
   studentNameTitle.textContent = "تفاصيل: " + name;
   studentDetailsTable.innerHTML = "";
 
-  const studentRow = weekData.find(row => row["اسم الطالب"] === name);
-  if (!studentRow) return;
-
-  const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-  days.forEach(day => {
+  records.forEach(record => {
     const tr = document.createElement("tr");
-    let total = 0;
-    const row = [day];
-
-    ["المشاركة", "الواجب", "السلوك", "الإختبار"].forEach(type => {
-      const key = `${day} - ${type}`;
-      const val = parseInt(studentRow[key] || "0");
-      row.push(val);
-      total += val;
-    });
-
-    row.push(total);
-    row.forEach((val, i) => {
+    const fields = ["اليوم", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
+    fields.forEach(f => {
       const td = document.createElement("td");
-      td.textContent = val;
-      if (i > 0 && i < 5) {
-        if (val >= 10) td.className = "green";
-        else if (val > 0) td.className = "orange";
-        else td.className = "red";
-      }
+      td.textContent = record[f] ?? "";
       tr.appendChild(td);
     });
     studentDetailsTable.appendChild(tr);
