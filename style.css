@@ -1,0 +1,101 @@
+
+body {
+  font-family: 'Cairo', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  direction: rtl;
+  color: #333;
+}
+
+header {
+  background-color: #2e7d32;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.dropdown-container {
+  margin: 1.5rem auto;
+  text-align: center;
+}
+
+select {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.table-container {
+  margin: 0 auto;
+  width: 95%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #43a047;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  padding-top: 50px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: white;
+  margin: auto;
+  padding: 1.5rem;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.close-button {
+  float: left;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
