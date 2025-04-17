@@ -1,4 +1,4 @@
-const scriptUrl = "https://script.google.com/macros/s/AKfycbzf0IfLlfk8zxquiGdkyTw6FKSE0GxhB0ZhAuEsplZ7rj_T5CDF_lEs5qspoEnFFItr/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbw5LCQVD6n0CmvjoPTh_NW_IRXkEU3nv-FF19ug_eAXphox8zVeec6IVkVWQd_UN6Kw/exec";
 
 const weekSelect = document.getElementById("weekSelect");
 const tableContainer = document.getElementById("tableContainer");
