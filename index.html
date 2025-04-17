@@ -1,34 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مسابقة التميز</title>
+  <title>مسابقة التميز للصف السادس</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>مسابقة التميز للصف السادس</h1>
-  <select id="weekSelect"></select>
-  <div id="tableContainer"></div>
+  <div class="container">
+    <h1 class="title">مسابقة التميز للصف السادس</h1>
+    <select id="sheetSelector"></select>
+    <div id="tableContainer" class="fade-in"></div>
+  </div>
 
-  <div id="studentModal" class="modal">
-    <div class="modal-content">
+  <div id="popup" class="popup hidden">
+    <div class="popup-content">
       <span class="close">&times;</span>
-      <h2 id="studentNameTitle"></h2>
-      <table id="studentDetailsTable">
-        <thead>
-          <tr>
-            <th>اليوم</th>
-            <th>المشاركة</th>
-            <th>الواجب</th>
-            <th>السلوك</th>
-            <th>الاختبار</th>
-            <th>المجموع</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <h2 id="popupTitle"></h2>
+      <table id="studentDetailsTable"></table>
     </div>
   </div>
 
