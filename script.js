@@ -1,112 +1,87 @@
-const scriptUrl = "https://script.google.com/macros/s/AKfycbw5LCQVD6n0CmvjoPTh_NW_IRXkEU3nv-FF19ug_eAXphox8zVeec6IVkVWQd_UN6Kw/exec";
+const apiURL = "https://script.google.com/macros/s/AKfycbw5LCQVD6n0CmvjoPTh_NW_IRXkEU3nv-FF19ug_eAXphox8zVeec6IVkVWQd_UN6Kw/exec";
 
-const weekSelect = document.getElementById("weekSelect");
-const tableContainer = document.getElementById("tableContainer");
-const modal = document.getElementById("studentModal");
-const modalClose = document.querySelector(".close");
-const studentNameTitle = document.getElementById("studentNameTitle");
-const studentDetailsTable = document.querySelector("#studentDetailsTable tbody");
+let allData = {};
+let currentSheet = "";
 
-let sheetData = {};
-
-fetch(scriptUrl)
+fetch(apiURL)
   .then(res => res.json())
-  .then(json => {
-    sheetData = json["النتائج"];
-    weekSelect.innerHTML = '<option disabled selected>اختر الأسبوع</option>';
-    for (let sheetName in sheetData) {
+  .then(data => {
+    allData = data["النتائج"];
+    const selector = document.getElementById("sheetSelector");
+    Object.keys(allData).forEach(sheet => {
       const option = document.createElement("option");
-      option.value = sheetName;
-      option.textContent = sheetName;
-      weekSelect.appendChild(option);
+      option.textContent = sheet;
+      selector.appendChild(option);
+    });
+    selector.addEventListener("change", () => renderSheet(selector.value));
+    renderSheet(selector.value);
+  });
+
+function renderSheet(sheetName) {
+  currentSheet = sheetName;
+  const container = document.getElementById("contentArea");
+  container.innerHTML = "";
+
+  const sheet = allData[sheetName];
+  const data = sheet["الترتيب"] || sheet;
+
+  const table = document.createElement("table");
+  const headers = Object.keys(data[0]);
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    headerRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  data.forEach(student => {
+    const row = tbody.insertRow();
+    headers.forEach(h => {
+      const cell = row.insertCell();
+      cell.textContent = student[h];
+    });
+
+    if (sheet["تفاصيل"]) {
+      row.addEventListener("click", () => showDetails(student["اسم الطالب"]));
     }
   });
 
-weekSelect.addEventListener("change", () => {
-  const weekName = weekSelect.value;
-  const data = sheetData[weekName];
-  tableContainer.innerHTML = "";
+  container.appendChild(table);
+}
 
-  if (!data) {
-    tableContainer.innerHTML = "<p>لا توجد بيانات</p>";
-    return;
-  }
+function showDetails(name) {
+  const details = allData[currentSheet]["تفاصيل"][name];
+  if (!details) return;
 
-  // إذا كانت صفحة الترتيب العام
-  if (Array.isArray(data)) {
-    renderGeneralTable(data);
-  } else {
-    renderWeeklyTable(data);
-  }
-});
+  const modal = document.getElementById("modal");
+  const content = document.getElementById("studentDetails");
 
-function renderGeneralTable(data) {
+  content.innerHTML = `<h3>تفاصيل: ${name}</h3>`;
   const table = document.createElement("table");
-  const headers = ["الرقم", "اسم الطالب", "النقاط", "الترتيب"];
-  const thead = table.createTHead();
-  const headRow = thead.insertRow();
+
+  const headers = ["اليوم", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
+  const thead = table.createTHead().insertRow();
   headers.forEach(h => {
     const th = document.createElement("th");
     th.textContent = h;
-    headRow.appendChild(th);
+    thead.appendChild(th);
   });
 
   const tbody = table.createTBody();
-  data.forEach(row => {
-    const tr = tbody.insertRow();
+  details.forEach(d => {
+    const row = tbody.insertRow();
     headers.forEach(h => {
-      const td = tr.insertCell();
-      td.textContent = row[h] || "";
+      const cell = row.insertCell();
+      cell.textContent = d[h] || 0;
     });
   });
 
-  tableContainer.appendChild(table);
+  content.appendChild(table);
+  modal.classList.remove("hidden");
 }
 
-function renderWeeklyTable(data) {
-  const table = document.createElement("table");
-  const headers = ["اسم الطالب", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
-  const thead = table.createTHead();
-  const headRow = thead.insertRow();
-  headers.forEach(h => {
-    const th = document.createElement("th");
-    th.textContent = h;
-    headRow.appendChild(th);
-  });
-
-  const tbody = table.createTBody();
-  data["الترتيب"].forEach(row => {
-    const tr = tbody.insertRow();
-    headers.forEach(h => {
-      const td = tr.insertCell();
-      td.textContent = row[h] || "";
-    });
-    tr.addEventListener("click", () => showStudentDetails(row["اسم الطالب"], data["تفاصيل"]));
-  });
-
-  tableContainer.appendChild(table);
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
 }
-
-function showStudentDetails(name, detailsData) {
-  const records = detailsData[name];
-  if (!records) return;
-
-  studentNameTitle.textContent = "تفاصيل: " + name;
-  studentDetailsTable.innerHTML = "";
-
-  records.forEach(record => {
-    const tr = document.createElement("tr");
-    const fields = ["اليوم", "المشاركة", "الواجب", "السلوك", "الاختبار", "المجموع"];
-    fields.forEach(f => {
-      const td = document.createElement("td");
-      td.textContent = record[f] ?? "";
-      tr.appendChild(td);
-    });
-    studentDetailsTable.appendChild(tr);
-  });
-
-  modal.style.display = "block";
-}
-
-modalClose.onclick = () => modal.style.display = "none";
-window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
